@@ -18,5 +18,4 @@ v -M   # Increment Major version
 v -m   # Increment Minor version
 v -p   # Increment Patch number
 v --set 1.2.3 # Manually set version
-v -c #Insert commit message
 ```

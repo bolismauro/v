@@ -13,9 +13,11 @@ var program = require('commander')
   , fs = require('fs')
   , version = require('./lib/version')
   , git = require('gitty')
+  , async = require('async')
   , data
   , version
-  , currentRepo;
+  , currentRepo
+  , commitMessage;
 
 program
   .version('0.0.1')
@@ -32,25 +34,62 @@ version.update(program);
 
 // do git stuff
 currentRepo = git('.');
-currentRepo.add([".",], undefined, true);
-currentRepo.commit(program.message, function(err, output) {
-  if(err) {
-    clog.error(err);
-    process.exit(1);
-  }
-  
-  clog.info("Pushing commit");
-  currentRepo.push("origin", "master", function(err, success) {
-    if(err) {
-      clog.error(err);
-      process.exit(1);
+
+async.series({
+  // commit message
+  'message' : function(callback) {
+    if(!program.message) {
+      program.prompt('Please enter a commit message:', function(message){
+        commitMessage = message;
+        callback(null, commitMessage);
+      });
     } else {
-      clog.ok("Push done", success);
+      commitMessage = program.message;
+      callback(null, program.message);
     }
-  });
+  },
 
+  // add files
+  'add_files' : function(callback) {
+    currentRepo.add(["."], function(err, output) {
+      if(err) {
+        callback(err);
+      } else {
+        clog.info("Files added");
+        callback(null, output);
+      }
+    });
+  },
+
+  // commit files
+  'commit' : function(callback) {
+    currentRepo.commit(commitMessage, function(err, output) {
+      if(err) {
+        callback(err);
+      } else {
+        clog.info("Files commited");
+        callback(null, output);
+      }      
+    });
+  },
+
+  //remote push
+  'remote_push': function(callback) {
+    clog.info("Pushing files to remote");
+    currentRepo.push("origin", "master", function(err, success) {
+      if(err) {
+        callback(err);
+      } else {
+        callback(null, success);
+      }
+    });
+  }
+}, function(err, results) {
+  if(err) {
+    clog.error("Can't complete task", err);
+    process.exit(1);
+  } else {
+    clog.ok("Push done", results.remote_push);  
+  }
 });
-
-
-
 
