@@ -1,6 +1,6 @@
 {
   "name": "v.js",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Increase / set version number in package.json.",
   "main": "index.js",
   "scripts": {},
@@ -22,6 +22,7 @@
   "gitHead": "e420bd367cd1385bdf83de8b5d743b05885e0ba8",
   "dependencies": {
     "commander": "~1.1.1",
-    "clog": "git://github.com/lusentis/clog.git"
+    "clog": "git://github.com/lusentis/clog.git",
+    "gitty": "~1.2.1"
   }
 }
