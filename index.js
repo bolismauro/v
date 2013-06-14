@@ -17,7 +17,8 @@ var program = require('commander')
   , data
   , version
   , currentRepo
-  , commitMessage;
+  , commitMessage
+  , currentVersion;
 
 program
   .version('0.0.1')
@@ -28,9 +29,23 @@ program
   .option('-c, --message <message>', 'The commit message')
   .parse(process.argv);
 
-// update the version in the package.json
-// TODO: remove program as param
-version.update(program);
+
+currentVersion = version.getCurrentVersion();
+
+if (program.set != null) {
+  version.update('s', program.set);
+} else {
+  if (program.major != null) {
+    version.update('M');
+  } else {
+    if (program.minor != null) {
+      version.update('m');
+    } else {
+      version.update('p');
+    }
+  }
+}
+
 
 // do git stuff
 currentRepo = git('.');
@@ -51,6 +66,11 @@ async.series({
 
   // add files
   'add_files' : function(callback) {
+    // update the history if needed
+    if (program.major != null || program.minor != null) {
+      version.writeHistory(commitMessage);
+    }
+    // then add files
     currentRepo.add(["."], function(err, output) {
       if(err) {
         callback(err);
@@ -87,6 +107,8 @@ async.series({
 }, function(err, results) {
   if(err) {
     clog.error("Can't complete task", err);
+    clog.info("Rollback to previous version");
+    version.update("S", currentVersion);
     process.exit(1);
   } else {
     clog.ok("Push done", results.remote_push);  

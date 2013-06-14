@@ -1,6 +1,6 @@
 {
   "name": "v.js",
-  "version": "2.2.0",
+  "version": "11.0.0",
   "description": "Increase / set version number in package.json.",
   "main": "index.js",
   "scripts": {},
@@ -16,7 +16,7 @@
     "configuration",
     "env"
   ],
-  "author": "Simone Lusenti <simone@plasticpanda.com>, Mauro Bolis <mauro@plasticpanda.com>",
+  "author": "Simone Lusenti <simone@plasticpanda.com>",
   "license": "BSD",
   "readmeFilename": "README.md",
   "gitHead": "e420bd367cd1385bdf83de8b5d743b05885e0ba8",
@@ -24,6 +24,7 @@
     "commander": "~1.1.1",
     "clog": "git://github.com/lusentis/clog.git",
     "gitty": "~1.2.1",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "dateformat": "1.0.6-1.2.3"
   }
 }
